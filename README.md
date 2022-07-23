@@ -49,7 +49,8 @@ estring = { version = "0.1", features = ["vec", "number"] }
 
 ## License
 
-**MIT**. See [LICENSE](./LICENSE) to see the full text.
+**MIT**. See [LICENSE](https://github.com/pleshevskiy/estring/LICENSE) to see
+the full text.
 
 ## Contributors
 
