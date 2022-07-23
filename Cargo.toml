@@ -25,6 +25,7 @@ prim = ["number", "bool"]
 number = []
 bool = []
 vec = []
+tuple = []
 
 [dependencies]
 

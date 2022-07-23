@@ -21,10 +21,8 @@ use std::fmt::Write;
 /// fn main() -> Result<(), estring::ParseError> {
 ///     let res = EString::from("1,2,3").parse::<CommaVec<u8>>()?;
 ///     assert_eq!(*res, vec![1, 2, 3]);
-///
 ///     Ok(())
 /// }
-///
 /// ```
 ///
 #[derive(Debug, PartialEq, Clone)]

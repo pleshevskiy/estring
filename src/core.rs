@@ -11,6 +11,11 @@ pub mod vec;
 #[cfg(feature = "vec")]
 pub use vec::*;
 
+#[cfg(feature = "tuple")]
+pub mod tuple;
+#[cfg(feature = "tuple")]
+pub use tuple::*;
+
 use crate::ParseError;
 use std::convert::{Infallible, TryFrom};
 
