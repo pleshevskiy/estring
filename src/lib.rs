@@ -27,29 +27,6 @@
 //! }
 //! ```
 //!
-//! ## Installation
-//!
-//! **The MSRV is 1.51.0**
-//!
-//! Add `estring = { version = "0.1", features = ["vec", "number"] }` as a
-//! dependency in `Cargo.toml`.
-//!
-//! `Cargo.toml` example:
-//!
-//! ```toml
-//! [package]
-//! name = "my-crate"
-//! version = "0.1.0"
-//! authors = ["Me <user@rust-lang.org>"]
-//!
-//! [dependencies]
-//! estring = { version = "0.1", features = ["vec", "number"] }
-//! ```
-//!
-//! ## License
-//!
-//! **MIT**. See [LICENSE](https://github.com/pleshevskiy/estring/LICENSE) to see the full text.
-//!
 #![deny(clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]
 #![deny(missing_docs)]
