@@ -5,7 +5,7 @@
 //!
 //! This package was originally designed for [enve]
 //!
-//! [enve]: https://github.com/pleshevskiy/itconfig-rs
+//! [enve]: https://github.com/pleshevskiy/itconfig-rs/tree/redesign
 //!
 //! ## Getting started
 //!
@@ -48,9 +48,7 @@
 //!
 //! ## License
 //!
-//! **MIT**.
-//!
-//! See [LICENSE](./LICENSE) to see the full text.
+//! **MIT**. See [LICENSE](https://github.com/pleshevskiy/estring/LICENSE) to see the full text.
 //!
 #![deny(clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]

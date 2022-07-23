@@ -1,11 +1,11 @@
 [package]
 name = "estring"
 description = "A simple way to parse a string using type annotations"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2018"
 authors = ["Dmitriy Pleshevskiy <dmitriy@ideascup.me>"]
 readme = "README.md"
-repository = "https://github.com/pleshevskiy/itconfig-rs/tree/redesign/estring"
+repository = "https://github.com/pleshevskiy/estring"
 license = "MIT"
 keywords = ["parsing", "type", "annotations", "customizable"]
 categories = ["data-structures", "parsing"]
@@ -18,6 +18,7 @@ msrv = "1.51.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
+prim = ["number", "bool"]
 number = []
 bool = []
 vec = []
