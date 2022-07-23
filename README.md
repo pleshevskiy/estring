@@ -1,5 +1,11 @@
 # EString
 
+[![docs.rs](https://img.shields.io/docsrs/estring?style=flat-square)](https://docs.rs/estring)
+[![Crates.io](https://img.shields.io/crates/v/estring?style=flat-square)](https://crates.io/crates/estring)
+[![Crates.io](https://img.shields.io/crates/l/estring?style=flat-square)](https://github.com/pleshevskiy/estring/LICENSE)
+[![unsafe forbidden](https://img.shields.io/badge/unsafe-forbidden-success.svg?style=flat-square)](https://github.com/rust-secure-code/safety-dance/)
+[![Matrix](https://img.shields.io/matrix/enve_team:matrix.org?label=matrix&style=flat-square)](https://matrix.to/#/!yZalHbWfGRWOMaetSn:matrix.org?via=matrix.org)
+
 A simple way to parse a string using type annotations.
 
 This package was originally designed for [enve]
