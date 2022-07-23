@@ -30,3 +30,7 @@ vec = []
 
 [badges]
 maintenance = { status = "actively-developed" }
+
+[[example]]
+name = "calc"
+required-features = ["vec", "number"]
