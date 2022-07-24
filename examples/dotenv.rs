@@ -1,12 +1,13 @@
-use estring::{EString, Pair, SepVec};
+use estring::{EString, Pair, SepVec, Trim};
 
-const DOTENV_CONTENT: &str = "\
+const DOTENV_CONTENT: &str = "
 DATABASE_URL=postgres://user:password@localhost:5432/recipes
-APP_HOST=http://localhost:3000";
+APP_HOST=http://localhost:3000
+";
 
 fn main() -> Result<(), estring::ParseError> {
     EString::from(DOTENV_CONTENT)
-        .parse::<SepVec<Pair<&str, '=', &str>, '\n'>>()?
+        .parse::<Trim<SepVec<Pair<&str, '=', &str>, '\n'>>>()?
         .iter()
         .for_each(|p @ Pair(key, value)| {
             println!("pair: {}", p);

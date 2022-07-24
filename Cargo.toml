@@ -26,6 +26,7 @@ number = []
 bool = []
 vec = []
 tuple = []
+low-level = []
 
 [dependencies]
 
@@ -38,4 +39,4 @@ required-features = ["vec", "number"]
 
 [[example]]
 name = "dotenv"
-required-features = ["vec", "tuple"]
+required-features = ["vec", "tuple", "low-level"]
