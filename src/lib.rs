@@ -29,7 +29,7 @@
 //!
 #![deny(clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]
-#![deny(missing_docs)]
+#![warn(missing_docs)]
 
 pub mod core;
 mod error;
