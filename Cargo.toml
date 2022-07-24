@@ -35,3 +35,7 @@ maintenance = { status = "actively-developed" }
 [[example]]
 name = "calc"
 required-features = ["vec", "number"]
+
+[[example]]
+name = "dotenv"
+required-features = ["vec", "tuple"]
