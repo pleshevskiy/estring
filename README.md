@@ -10,7 +10,7 @@ A simple way to parse a string using type annotations.
 
 This package was originally designed for [enve]
 
-[enve]: https://github.com/pleshevskiy/itconfig-rs/tree/redesign
+[enve]: https://github.com/pleshevskiy/enve
 
 ## Getting started
 
