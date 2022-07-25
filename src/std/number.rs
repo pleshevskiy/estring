@@ -4,7 +4,6 @@ use crate::core::EString;
 macro_rules! from_env_string_numbers_impl {
     ($($ty:ty),+$(,)?) => {
         $(
-            #[cfg(feature = "number")]
             impl TryFrom<EString> for $ty {
                 type Error = <$ty as std::str::FromStr>::Err;
 

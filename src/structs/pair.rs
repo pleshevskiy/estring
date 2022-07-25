@@ -1,6 +1,4 @@
-//! Contains the implementations to tuple type
-//!
-//! **NOTE**: Require the enabling of the `tuple` features
+//! Contains the implementations to pair tuple type
 //!
 
 use crate::core::EString;
@@ -87,6 +85,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::structs::SepVec;
 
     type EqPair<A, B> = Pair<A, '=', B>;
 
@@ -108,24 +107,17 @@ mod tests {
         };
     }
 
-    #[cfg(feature = "number")]
-    mod vec {
-        use crate::SepVec;
+    type LineVec<T> = SepVec<T, '\n'>;
 
-        use super::*;
-
-        type LineVec<T> = SepVec<T, '\n'>;
-
-        #[test]
-        fn should_parse_vec_of_pairs() {
-            let estr = EString::from(
-                "foo=bar
+    #[test]
+    fn should_parse_vec_of_pairs() {
+        let estr = EString::from(
+            "foo=bar
 hello=bar",
-            );
-            match estr.parse::<LineVec<EqPair<&str, &str>>>() {
-                Ok(res) => assert_eq!(res, SepVec(vec![Pair("foo", "bar"), Pair("hello", "bar"),])),
-                _ => unreachable!(),
-            };
-        }
+        );
+        match estr.parse::<LineVec<EqPair<&str, &str>>>() {
+            Ok(res) => assert_eq!(res, SepVec(vec![Pair("foo", "bar"), Pair("hello", "bar"),])),
+            _ => unreachable!(),
+        };
     }
 }

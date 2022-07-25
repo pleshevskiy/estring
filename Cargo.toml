@@ -17,12 +17,9 @@ all-features = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-prim = ["number", "bool"]
-number = []
-bool = []
-vec = []
-tuple = []
 low-level = []
+aggs = []
+structs = []
 
 [dependencies]
 
@@ -31,8 +28,8 @@ maintenance = { status = "actively-developed" }
 
 [[example]]
 name = "calc"
-required-features = ["vec", "number"]
+required-features = ["structs"]
 
 [[example]]
 name = "dotenv"
-required-features = ["vec", "tuple", "low-level"]
+required-features = ["structs", "low-level"]
