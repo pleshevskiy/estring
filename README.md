@@ -37,7 +37,7 @@ You can use custom types as annotations! Just implement `TryFrom<EString>`!
 
 ## Installation
 
-**The MSRV is 1.51.0**
+**The MSRV is 1.59.0**
 
 Add `estring = { version = "0.1", features = ["vec", "number"] }` as a
 dependency in `Cargo.toml`.
