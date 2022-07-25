@@ -48,6 +48,7 @@ dependency in `Cargo.toml`.
 [package]
 name = "my-crate"
 version = "0.1.0"
+edition = "2021"
 authors = ["Me <user@rust-lang.org>"]
 
 [dependencies]
