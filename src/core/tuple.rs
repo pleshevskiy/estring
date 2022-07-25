@@ -4,7 +4,6 @@
 //!
 
 use crate::core::EString;
-use std::convert::TryFrom;
 use std::fmt::Write;
 
 /// The error type for operations interacting with parsing tuples. Possibly returned from

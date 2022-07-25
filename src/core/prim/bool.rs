@@ -1,5 +1,4 @@
 use crate::core::EString;
-use std::convert::TryFrom;
 
 impl TryFrom<EString> for bool {
     type Error = ();

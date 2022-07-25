@@ -22,7 +22,7 @@ pub mod low;
 pub use low::*;
 
 use crate::ParseError;
-use std::convert::{Infallible, TryFrom};
+use std::convert::Infallible;
 
 /// Wrapper under String type.
 #[derive(Debug, Default, PartialEq, Eq, Clone)]

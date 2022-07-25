@@ -4,7 +4,6 @@
 //!
 
 use crate::core::EString;
-use std::convert::TryFrom;
 use std::fmt::Write;
 
 /// Wrapper for ``Vec`` to split string by a separator (`SEP`).

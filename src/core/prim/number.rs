@@ -1,5 +1,4 @@
 use crate::core::EString;
-use std::convert::TryFrom;
 
 #[doc(hidden)]
 macro_rules! from_env_string_numbers_impl {
