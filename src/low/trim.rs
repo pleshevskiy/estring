@@ -1,9 +1,5 @@
 use crate::core::EString;
 
-//===========================================================================//
-// TRIM                                                                      //
-//===========================================================================//
-
 /// Wrapper that allow to trim substring before continue
 ///
 /// **NOTE**: Required the enabling of the `low-level` feature.

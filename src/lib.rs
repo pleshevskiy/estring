@@ -31,8 +31,17 @@
 #![allow(clippy::module_name_repetitions)]
 #![warn(missing_docs)]
 
-pub mod core;
 mod error;
+
+pub mod core;
+pub mod std;
+
+#[cfg(feature = "aggs")]
+pub mod agg;
+#[cfg(feature = "low-level")]
+pub mod low;
+#[cfg(feature = "structs")]
+pub mod structs;
 
 pub use crate::core::*;
 pub use crate::error::ParseError;

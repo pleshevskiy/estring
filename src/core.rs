@@ -1,25 +1,6 @@
 //! Contains the ``EString`` type, as well as the basic implementation of conversions to
 //! string types
 //!
-#[cfg(any(feature = "number", feature = "bool"))]
-pub mod prim;
-#[cfg(any(feature = "number", feature = "bool"))]
-pub use prim::*;
-
-#[cfg(feature = "vec")]
-pub mod vec;
-#[cfg(feature = "vec")]
-pub use vec::*;
-
-#[cfg(feature = "tuple")]
-pub mod tuple;
-#[cfg(feature = "tuple")]
-pub use tuple::*;
-
-#[cfg(feature = "low-level")]
-pub mod low;
-#[cfg(feature = "low-level")]
-pub use low::*;
 
 use crate::ParseError;
 use std::convert::Infallible;

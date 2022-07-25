@@ -1,7 +1,5 @@
 //! Contains the implementations to vec type
 //!
-//! **NOTE**: Require the enabling of the `vec` features
-//!
 
 use crate::core::EString;
 use std::fmt::Write;
@@ -78,6 +76,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ParseError;
 
     const COMMA: char = ',';
     const SEMI: char = ';';
@@ -122,29 +121,23 @@ d,e";
         };
     }
 
-    #[cfg(feature = "number")]
-    mod numbers {
-        use super::*;
-        use crate::ParseError;
+    #[test]
+    fn should_parse_into_num_vec() {
+        let estr = EString::from("1,2,3,4,5");
+        match estr.parse::<CommaVec<i32>>() {
+            Ok(res) => assert_eq!(*res, vec![1, 2, 3, 4, 5]),
+            _ => unreachable!(),
+        };
+    }
 
-        #[test]
-        fn should_parse_into_num_vec() {
-            let estr = EString::from("1,2,3,4,5");
-            match estr.parse::<CommaVec<i32>>() {
-                Ok(res) => assert_eq!(*res, vec![1, 2, 3, 4, 5]),
-                _ => unreachable!(),
-            };
-        }
-
-        #[test]
-        fn should_throw_parse_vec_error() {
-            let estr = EString::from("1,2,3,4,5");
-            match estr.parse::<SemiVec<i32>>() {
-                Err(ParseError(orig)) => {
-                    assert_eq!(orig, String::from("1,2,3,4,5"));
-                }
-                _ => unreachable!(),
-            };
-        }
+    #[test]
+    fn should_throw_parse_vec_error() {
+        let estr = EString::from("1,2,3,4,5");
+        match estr.parse::<SemiVec<i32>>() {
+            Err(ParseError(orig)) => {
+                assert_eq!(orig, String::from("1,2,3,4,5"));
+            }
+            _ => unreachable!(),
+        };
     }
 }

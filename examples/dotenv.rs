@@ -1,4 +1,6 @@
-use estring::{EString, Pair, SepVec, Trim};
+use estring::low::Trim;
+use estring::structs::{Pair, SepVec};
+use estring::EString;
 
 const DOTENV_CONTENT: &str = "
 DATABASE_URL=postgres://user:password@localhost:5432/recipes
