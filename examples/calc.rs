@@ -1,5 +1,4 @@
-use estring::structs::SepVec;
-use estring::EString;
+use estring::{EString, SepVec};
 
 type PlusVec<T> = SepVec<T, '+'>;
 type MulVec<T> = SepVec<T, '*'>;

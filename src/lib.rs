@@ -38,10 +38,17 @@ pub mod std;
 
 #[cfg(feature = "aggs")]
 pub mod agg;
+#[cfg(feature = "aggs")]
+pub use agg::*;
+
 #[cfg(feature = "low-level")]
 pub mod low;
+#[cfg(feature = "low-level")]
+pub use low::*;
 #[cfg(feature = "structs")]
 pub mod structs;
+#[cfg(feature = "structs")]
+pub use structs::*;
 
 pub use crate::core::*;
 pub use crate::error::ParseError;
