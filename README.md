@@ -1,5 +1,6 @@
 # EString
 
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/pleshevskiy/estring/CI?label=tests&logo=github&style=flat-square)](https://github.com/pleshevskiy/estring/actions/workflows/ci.yml)
 [![docs.rs](https://img.shields.io/docsrs/estring?style=flat-square)](https://docs.rs/estring)
 [![Crates.io](https://img.shields.io/crates/v/estring?style=flat-square)](https://crates.io/crates/estring)
 [![Crates.io](https://img.shields.io/crates/l/estring?style=flat-square)](https://github.com/pleshevskiy/estring/LICENSE)
