@@ -63,9 +63,10 @@ where
 mod tests {
     use super::*;
 
+    type EqTrio<A, B, C> = Trio<A, '=', B, '=', C>;
+
     #[test]
     fn should_parse_into_trio() {
-        type EqTrio<A, B, C> = Trio<A, '=', B, '=', C>;
         let estr = EString::from("hello=world=hello");
         match estr.parse::<EqTrio<&str, &str, &str>>() {
             Ok(res) => assert_eq!((res.0, res.1, res.2), ("hello", "world", "hello")),
@@ -75,9 +76,8 @@ mod tests {
 
     #[test]
     fn should_parse_into_trio_with_alternate_delims() {
-        type EqTrio<A, B, C> = Trio<A, '-', B, '^', C>;
         let estr = EString::from("hello-world^hello");
-        match estr.parse::<EqTrio<&str, &str, &str>>() {
+        match estr.parse::<Trio<&str, '-', &str, '^', &str>>() {
             Ok(res) => assert_eq!((res.0, res.1, res.2), ("hello", "world", "hello")),
             _ => unreachable!(),
         };
@@ -85,7 +85,6 @@ mod tests {
 
     #[test]
     fn should_parse_rest_as_trio() {
-        type EqTrio<A, B, C> = Trio<A, '=', B, '=', C>;
         let estr = EString::from("hello=world=hello=world=hello");
         match estr.parse::<EqTrio<&str, &str, EqTrio<&str, &str, &str>>>() {
             Ok(res) => assert_eq!(res, Trio("hello", "world", Trio("hello", "world", "hello"))),
