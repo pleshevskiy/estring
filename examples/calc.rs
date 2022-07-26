@@ -3,7 +3,7 @@ use estring::{EString, SepVec};
 type PlusVec<T> = SepVec<T, '+'>;
 type MulVec<T> = SepVec<T, '*'>;
 
-fn main() -> Result<(), estring::ParseError> {
+fn main() -> estring::Result<()> {
     let res = EString::from("10+5*2+3")
         .parse::<PlusVec<MulVec<f32>>>()?
         .iter()

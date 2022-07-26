@@ -21,7 +21,7 @@ use estring::{SepVec, EString};
 type PlusVec<T> = SepVec<T, '+'>;
 type MulVec<T> = SepVec<T, '*'>;
 
-fn main() -> Result<(), estring::ParseError> {
+fn main() -> estring::Result<()> {
     let res = EString::from("10+5*2+3")
         .parse::<PlusVec<MulVec<f32>>>()?
         .iter()
@@ -33,14 +33,15 @@ fn main() -> Result<(), estring::ParseError> {
 }
 ```
 
-You can use custom types as annotations! Just implement `TryFrom<EString>`!
+You can use custom types as annotations! Just implement
+`estring::ParseFragment`!
 
 ## Installation
 
 **The MSRV is 1.59.0**
 
-Add `estring = { version = "0.1", features = ["vec", "number"] }` as a
-dependency in `Cargo.toml`.
+Add `estring = { version = "0.1", features = ["structs"] }` as a dependency in
+`Cargo.toml`.
 
 `Cargo.toml` example:
 
@@ -52,7 +53,7 @@ edition = "2021"
 authors = ["Me <user@rust-lang.org>"]
 
 [dependencies]
-estring = { version = "0.1", features = ["vec", "number"] }
+estring = { version = "0.1", features = ["structs"] }
 ```
 
 ## License

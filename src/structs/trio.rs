@@ -1,44 +1,21 @@
 //! Contains the implementations to parse triple-tuple type
 //!
 
-use crate::core::EString;
+use super::Pair;
+use crate::core::{EString, ParseFragment};
 use std::fmt::Write;
-
-/// The error type for operations interacting with parsing tuples. Possibly returned from
-/// ``EString::parse``
-#[derive(Debug)]
-pub enum Error {
-    /// The specified input string is not split.
-    Split,
-
-    /// The specified substring of the split input string is not parsed
-    Parse(u8),
-}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Error::Split => f.write_str("Cannot split input string"),
-            Error::Parse(n) => write!(f, "Cannot parse {} substring", n),
-        }
-    }
-}
-
-impl std::error::Error for Error {}
 
 /// Wrapper for trio (A, B, C) tuple to split string by separators (`S1` and `S2`).
 ///
-/// **NOTE**: Required the enabling of the `tuple` feature.
+/// **NOTE**: Required the enabling of the `structs` feature.
 ///
 /// # Examples
 ///
 /// ```rust
 /// use estring::{Trio, EString};
 ///
-/// type EqTrio<A, B, C> = Trio<A, '=', B, '=', C>;
-///
-/// fn main() -> Result<(), estring::ParseError> {
-///     let res = EString::from("one=two=free").parse::<EqTrio<&str, &str, &str>>()?;
+/// fn main() -> estring::Result<()> {
+///     let res = EString::from("one+two=free").parse::<Trio<&str, '+', &str, '=', &str>>()?;
 ///     assert_eq!(res, Trio("one", "two", "free"));
 ///     Ok(())
 /// }
@@ -69,22 +46,15 @@ where
     }
 }
 
-impl<A, const S1: char, B, const S2: char, C> TryFrom<EString> for Trio<A, S1, B, S2, C>
+impl<A, const S1: char, B, const S2: char, C> ParseFragment for Trio<A, S1, B, S2, C>
 where
-    A: TryFrom<EString>,
-    B: TryFrom<EString>,
-    C: TryFrom<EString>,
+    A: ParseFragment,
+    B: ParseFragment,
+    C: ParseFragment,
 {
-    type Error = Error;
-
-    fn try_from(value: EString) -> Result<Self, Self::Error> {
-        value.split_once(S1).ok_or(Error::Split).and_then(|(a, b)| {
-            let a = A::try_from(EString::from(a)).map_err(|_| Error::Parse(0))?;
-            b.split_once(S2).ok_or(Error::Split).and_then(|(b, c)| {
-                let b = B::try_from(EString::from(b)).map_err(|_| Error::Parse(1))?;
-                let c = C::try_from(EString::from(c)).map_err(|_| Error::Parse(2))?;
-                Ok(Self(a, b, c))
-            })
+    fn parse_frag(value: EString) -> crate::Result<Self> {
+        Pair::<A, S1, EString>::parse_frag(value).and_then(|Pair(a, rest)| {
+            Pair::<B, S2, C>::parse_frag(rest).map(|Pair(b, c)| Self(a, b, c))
         })
     }
 }
@@ -92,7 +62,6 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::structs::SepVec;
 
     #[test]
     fn should_parse_into_trio() {

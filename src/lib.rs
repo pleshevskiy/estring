@@ -15,7 +15,7 @@
 //! type PlusVec<T> = SepVec<T, '+'>;
 //! type MulVec<T> = SepVec<T, '*'>;
 //!
-//! fn main() -> Result<(), estring::ParseError> {
+//! fn main() -> estring::Result<()> {
 //!     let res = EString::from("10+5*2+3")
 //!         .parse::<PlusVec<MulVec<f32>>>()?
 //!         .iter()
@@ -32,6 +32,43 @@
 #![warn(missing_docs)]
 
 mod error;
+pub use error::{Error, Reason};
+/// The type returned by parser methods.
+///
+/// # Examples
+///
+/// ```rust
+/// use estring::{EString, ParseFragment, Reason};
+///
+/// #[derive(Debug, PartialEq)]
+/// struct Point {
+///     x: i32,
+///     y: i32,
+/// }
+///
+/// impl ParseFragment for Point {
+///     fn parse_frag(es: EString) -> estring::Result<Self> {
+///         let orig = es.clone();
+///         let (x, y) = es
+///             .trim_matches(|p| p == '(' || p == ')')
+///             .split_once(',')
+///             .ok_or(estring::Error(orig, Reason::Split))?;
+///
+///         let (x, y) = (EString::from(x), EString::from(y));
+///         let x = x.clone().parse::<i32>()
+///             .map_err(|_| estring::Error(x, Reason::Parse))?;
+///         let y = y.clone().parse::<i32>()
+///             .map_err(|_| estring::Error(y, Reason::Parse))?;
+///
+///         Ok(Point { x, y })
+///     }
+/// }
+///
+/// let fragment = EString::from("(1,2)");
+/// let res = Point::parse_frag(fragment).unwrap();
+/// assert_eq!(res, Point { x: 1, y: 2 })
+/// ```
+pub type Result<T> = ::std::result::Result<T, Error>;
 
 pub mod core;
 pub mod std;
@@ -51,4 +88,3 @@ pub mod structs;
 pub use structs::*;
 
 pub use crate::core::*;
-pub use crate::error::ParseError;

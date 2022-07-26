@@ -5,7 +5,7 @@ DATABASE_URL=postgres://user:password@localhost:5432/recipes
 APP_HOST=http://localhost:3000
 ";
 
-fn main() -> Result<(), estring::ParseError> {
+fn main() -> estring::Result<()> {
     EString::from(DOTENV_CONTENT)
         .parse::<Trim<SepVec<Pair<&str, '=', &str>, '\n'>>>()?
         .iter()

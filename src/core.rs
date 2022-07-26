@@ -2,8 +2,73 @@
 //! string types
 //!
 
-use crate::ParseError;
-use std::convert::Infallible;
+// TODO: add more info and examples.
+/// Format a value fragment into a ``EString``.
+pub trait FormatFragment {
+    /// Format this type and returns ``EString``.
+    fn fmt_frag(&self) -> EString;
+}
+
+/// Parse a value fragment from a ``EString``.
+///
+/// ``ParseFragment``’s `parse_frag` method is often used imlicitly, through ``EString``’s parse.
+/// See [parse](EString::parse)’s documentation for examples.
+///
+/// # Examples
+///
+/// Basic implementation of ``ParseFragment`` on an example ``Point``.
+///
+/// ```rust
+/// use estring::{EString, ParseFragment, Reason};
+///
+/// #[derive(Debug, PartialEq)]
+/// struct Point {
+///     x: i32,
+///     y: i32,
+/// }
+///
+/// impl ParseFragment for Point {
+///     fn parse_frag(es: EString) -> estring::Result<Self> {
+///         let orig = es.clone();
+///         let (x, y) = es
+///             .trim_matches(|p| p == '(' || p == ')')
+///             .split_once(',')
+///             .ok_or(estring::Error(orig, Reason::Split))?;
+///
+///         let (x, y) = (EString::from(x), EString::from(y));
+///         let x = x.clone().parse::<i32>()
+///             .map_err(|_| estring::Error(x, Reason::Parse))?;
+///         let y = y.clone().parse::<i32>()
+///             .map_err(|_| estring::Error(y, Reason::Parse))?;
+///
+///         Ok(Point { x, y })
+///     }
+/// }
+///
+/// let fragment = EString::from("(1,2)");
+/// let res = Point::parse_frag(fragment).unwrap();
+/// assert_eq!(res, Point { x: 1, y: 2 })
+/// ```
+///
+pub trait ParseFragment: Sized {
+    /// Parses a ``EString`` fragment `es` to return a value of this type.
+    ///
+    /// # Errors
+    ///
+    /// If parsing is not succeeds, returns ``Error`` inside ``Err`` with original fragment `es`
+    /// and reason ``Reason``.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use estring::{EString, ParseFragment};
+    ///
+    /// let fragment = EString::from("5");
+    /// let res = i32::parse_frag(fragment).unwrap();
+    /// assert_eq!(res, 5);
+    /// ```
+    fn parse_frag(es: EString) -> crate::Result<Self>;
+}
 
 /// Wrapper under String type.
 #[derive(Debug, Default, PartialEq, Eq, Clone)]
@@ -17,9 +82,8 @@ impl EString {
     /// Will return `Err` if estring cannot parse inner fragment
     ///
     #[inline]
-    pub fn parse<T: TryFrom<EString>>(self) -> Result<T, ParseError> {
-        let orig = self.0.clone();
-        <T as TryFrom<EString>>::try_from(self).map_err(|_| ParseError(orig))
+    pub fn parse<T: ParseFragment>(self) -> crate::Result<T> {
+        T::parse_frag(self)
     }
 }
 
@@ -42,20 +106,23 @@ impl std::ops::Deref for EString {
     }
 }
 
-impl TryFrom<EString> for String {
-    type Error = Infallible;
-
+impl ParseFragment for EString {
     #[inline]
-    fn try_from(s: EString) -> Result<Self, Self::Error> {
+    fn parse_frag(value: EString) -> crate::Result<Self> {
+        Ok(value)
+    }
+}
+
+impl ParseFragment for String {
+    #[inline]
+    fn parse_frag(s: EString) -> crate::Result<Self> {
         Ok(s.0)
     }
 }
 
-impl TryFrom<EString> for &'static str {
-    type Error = Infallible;
-
+impl ParseFragment for &'static str {
     #[inline]
-    fn try_from(s: EString) -> Result<Self, Self::Error> {
+    fn parse_frag(s: EString) -> crate::Result<Self> {
         Ok(Box::leak(s.0.into_boxed_str()))
     }
 }

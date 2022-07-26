@@ -1,15 +1,14 @@
-use crate::core::EString;
+use crate::core::{EString, ParseFragment};
+use crate::error::{Error, Reason};
 
 #[doc(hidden)]
 macro_rules! from_env_string_numbers_impl {
     ($($ty:ty),+$(,)?) => {
         $(
-            impl TryFrom<EString> for $ty {
-                type Error = <$ty as std::str::FromStr>::Err;
-
+            impl ParseFragment for $ty {
                 #[inline]
-                fn try_from(s: EString) -> Result<Self, Self::Error> {
-                    s.0.parse::<Self>()
+                fn parse_frag(s: EString) -> crate::Result<Self> {
+                    s.0.parse::<Self>().map_err(|_| Error(s, Reason::Parse))
                 }
             }
         )+
@@ -26,7 +25,6 @@ from_env_string_numbers_impl![
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ParseError;
 
     #[test]
     fn should_parse_number() {
@@ -51,8 +49,9 @@ mod tests {
     fn should_throw_parse_error() {
         let estr = EString::from("-10");
         match estr.parse::<u32>() {
-            Err(ParseError(orig)) => {
-                assert_eq!(orig, String::from("-10"));
+            Err(Error(orig, reason)) => {
+                assert_eq!(orig, EString::from("-10"));
+                assert_eq!(reason, Reason::Parse);
             }
             _ => unreachable!(),
         };
