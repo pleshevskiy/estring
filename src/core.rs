@@ -3,7 +3,7 @@
 //!
 
 use crate::ParseError;
-use std::convert::Infallible;
+use std::{convert::Infallible, num::ParseIntError};
 
 /// Wrapper under String type.
 #[derive(Debug, Default, PartialEq, Eq, Clone)]
@@ -48,6 +48,18 @@ impl TryFrom<EString> for String {
     #[inline]
     fn try_from(s: EString) -> Result<Self, Self::Error> {
         Ok(s.0)
+    }
+}
+
+impl TryFrom<EString> for Option<i32> {
+    type Error = Infallible;
+
+    fn try_from(s: EString) -> Result<Self, Self::Error> {
+        let res: Result<i32, ParseIntError> = s.try_into();
+        match res {
+            Ok(i) => Ok(Some(i)),
+            Err(_) => Ok(None),
+        }
     }
 }
 
