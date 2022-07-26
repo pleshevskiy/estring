@@ -99,4 +99,22 @@ mod tests {
             _ => unreachable!(),
         }
     }
+
+    #[test]
+    fn should_parse_i32_to_none() {
+        let estr = EString::from("");
+        match estr.parse::<Option<i32>>() {
+            Ok(res) => assert_eq!(res, None),
+            _ => unreachable!(),
+        }
+    }
+
+    #[test]
+    fn should_parse_i32_to_i32() {
+        let estr = EString::from("99");
+        match estr.parse::<Option<i32>>() {
+            Ok(res) => assert_eq!(res, Some(99)),
+            _ => unreachable!(),
+        }
+    }
 }
