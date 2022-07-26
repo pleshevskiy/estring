@@ -11,7 +11,7 @@ pub trait FormatFragment {
 
 /// Parse a value fragment from a ``EString``.
 ///
-/// ``ParseFragment``’s `parse_frag` method is often used imlicitly, through ``EString``’s parse.
+/// ``ParseFragment``’s `parse_frag` method is often used implicitly, through ``EString``’s parse.
 /// See [parse](EString::parse)’s documentation for examples.
 ///
 /// # Examples
@@ -75,12 +75,33 @@ pub trait ParseFragment: Sized {
 pub struct EString(pub String);
 
 impl EString {
-    /// Parses inner string by type annotations and returns result.
+    /// Parses this inner string into another type.
+    ///
+    /// `parse` can parse into any type that implements the ``ParseFragment`` trait.
     ///
     /// # Errors
     ///
-    /// Will return `Err` if estring cannot parse inner fragment
+    /// Will return `Err` if estring cannot parse inner fragment into the desired type.
     ///
+    /// # Examples
+    ///
+    /// Basic usage
+    ///
+    /// ```rust
+    /// # use estring::{EString, ParseFragment};
+    /// let fragment = EString::from("5");
+    /// let res = i32::parse_frag(fragment);
+    /// assert_eq!(res, Ok(5));
+    /// ```
+    ///
+    /// Failing to parse:
+    ///
+    /// ```rust
+    /// # use estring::{EString, ParseFragment, Error, Reason};
+    /// let fragment = EString::from("j");
+    /// let res = i32::parse_frag(fragment.clone());
+    /// assert_eq!(res, Err(Error(fragment, Reason::Parse)));
+    /// ```
     #[inline]
     pub fn parse<T: ParseFragment>(self) -> crate::Result<T> {
         T::parse_frag(self)

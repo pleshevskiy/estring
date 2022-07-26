@@ -1,7 +1,7 @@
 use crate::core::EString;
 
 /// The error type for operations interacting with ``EString``’s fragments.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Error(pub EString, pub Reason);
 
 /// The reason for the failure to parse.
