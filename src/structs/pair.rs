@@ -1,34 +1,13 @@
 //! Contains the implementations to pair tuple type
 //!
 
-use crate::core::EString;
+use crate::core::{EString, ParseFragment};
+use crate::{Error, Reason};
 use std::fmt::Write;
-
-/// The error type for operations interacting with parsing tuples. Possibly returned from
-/// ``EString::parse``
-#[derive(Debug)]
-pub enum Error {
-    /// The specified input string is not split.
-    Split,
-
-    /// The specified substring of the split input string is not parsed
-    Parse(u8),
-}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Error::Split => f.write_str("Cannot split input string"),
-            Error::Parse(n) => write!(f, "Cannot parse {} substring", n),
-        }
-    }
-}
-
-impl std::error::Error for Error {}
 
 /// Wrapper for pair (A, B) tuple to split string by a separator (`S1`).
 ///
-/// **NOTE**: Required the enabling of the `tuple` feature.
+/// **NOTE**: Required the enabling of the `structs` feature.
 ///
 /// # Examples
 ///
@@ -37,7 +16,7 @@ impl std::error::Error for Error {}
 ///
 /// type EqPair<A, B> = Pair<A, '=', B>;
 ///
-/// fn main() -> Result<(), estring::ParseError> {
+/// fn main() -> estring::Result<()> {
 ///     let res = EString::from("one=two=free").parse::<EqPair<&str, &str>>()?;
 ///     assert_eq!(res, Pair("one", "two=free"));
 ///     Ok(())
@@ -66,19 +45,22 @@ where
     }
 }
 
-impl<A, const S1: char, B> TryFrom<EString> for Pair<A, S1, B>
+impl<A, const S1: char, B> ParseFragment for Pair<A, S1, B>
 where
-    A: TryFrom<EString>,
-    B: TryFrom<EString>,
+    A: ParseFragment,
+    B: ParseFragment,
 {
-    type Error = Error;
-
-    fn try_from(value: EString) -> Result<Self, Self::Error> {
-        value.split_once(S1).ok_or(Error::Split).and_then(|(a, b)| {
-            let a = A::try_from(EString::from(a)).map_err(|_| Error::Parse(0))?;
-            let b = B::try_from(EString::from(b)).map_err(|_| Error::Parse(1))?;
-            Ok(Self(a, b))
-        })
+    fn parse_frag(value: EString) -> crate::Result<Self> {
+        value
+            .clone()
+            .split_once(S1)
+            .ok_or(Error(value, Reason::Split))
+            .and_then(|(a, b)| {
+                let (a, b) = (EString::from(a), EString::from(b));
+                let a = A::parse_frag(a.clone()).map_err(|_| Error(a, Reason::Parse))?;
+                let b = B::parse_frag(b.clone()).map_err(|_| Error(b, Reason::Parse))?;
+                Ok(Self(a, b))
+            })
     }
 }
 

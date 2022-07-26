@@ -1,12 +1,12 @@
 //! Contains the implementations to vec type
 //!
 
-use crate::core::EString;
+use crate::core::{EString, ParseFragment};
 use std::fmt::Write;
 
 /// Wrapper for ``Vec`` to split string by a separator (`SEP`).
 ///
-/// **NOTE**: Required the enabling of the `vec` feature.
+/// **NOTE**: Required the enabling of the `structs` feature.
 ///
 /// # Examples
 ///
@@ -15,7 +15,7 @@ use std::fmt::Write;
 ///
 /// type CommaVec<T> = SepVec<T, ','>;
 ///
-/// fn main() -> Result<(), estring::ParseError> {
+/// fn main() -> estring::Result<()> {
 ///     let res = EString::from("1,2,3").parse::<CommaVec<u8>>()?;
 ///     assert_eq!(*res, vec![1, 2, 3]);
 ///     Ok(())
@@ -56,19 +56,17 @@ where
     }
 }
 
-impl<T, const SEP: char> TryFrom<EString> for SepVec<T, SEP>
+impl<T, const SEP: char> ParseFragment for SepVec<T, SEP>
 where
-    T: TryFrom<EString> + std::fmt::Display,
+    T: ParseFragment,
 {
-    type Error = T::Error;
-
-    fn try_from(value: EString) -> Result<Self, Self::Error> {
+    fn parse_frag(value: EString) -> crate::Result<Self> {
         let inner = value
             .split(SEP)
             .map(str::trim)
             .map(EString::from)
-            .map(T::try_from)
-            .collect::<Result<Vec<_>, _>>()?;
+            .map(T::parse_frag)
+            .collect::<crate::Result<Vec<_>>>()?;
         Ok(Self(inner))
     }
 }
@@ -76,7 +74,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ParseError;
+    use crate::{Error, Reason};
 
     const COMMA: char = ',';
     const SEMI: char = ';';
@@ -134,8 +132,9 @@ d,e";
     fn should_throw_parse_vec_error() {
         let estr = EString::from("1,2,3,4,5");
         match estr.parse::<SemiVec<i32>>() {
-            Err(ParseError(orig)) => {
-                assert_eq!(orig, String::from("1,2,3,4,5"));
+            Err(Error(orig, reason)) => {
+                assert_eq!(orig, EString::from("1,2,3,4,5"));
+                assert_eq!(reason, Reason::Parse);
             }
             _ => unreachable!(),
         };

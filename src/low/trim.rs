@@ -1,4 +1,4 @@
-use crate::core::EString;
+use crate::{core::EString, ParseFragment};
 
 /// Wrapper that allow to trim substring before continue
 ///
@@ -9,7 +9,7 @@ use crate::core::EString;
 /// ```rust
 /// use estring::{EString, Trim};
 ///
-/// fn main() -> Result<(), estring::ParseError> {
+/// fn main() -> estring::Result<()> {
 ///     let res = EString::from(" 99 ").parse::<Trim<i32>>()?;
 ///     assert_eq!(res, Trim(99));
 ///     Ok(())
@@ -33,16 +33,12 @@ impl<T: std::fmt::Display> std::fmt::Display for Trim<T> {
     }
 }
 
-impl<T> TryFrom<EString> for Trim<T>
+impl<T> ParseFragment for Trim<T>
 where
-    T: TryFrom<EString>,
+    T: ParseFragment,
 {
-    type Error = ();
-
-    fn try_from(value: EString) -> Result<Self, Self::Error> {
-        T::try_from(EString::from(value.trim()))
-            .map(Trim)
-            .map_err(|_| ())
+    fn parse_frag(value: EString) -> crate::Result<Self> {
+        T::parse_frag(EString::from(value.trim())).map(Trim)
     }
 }
 
@@ -60,7 +56,6 @@ mod tests {
         }
     }
 
-    #[cfg(feature = "number")]
     #[test]
     fn should_trim_and_convert_to_number() {
         let estr = EString::from("    999   ");

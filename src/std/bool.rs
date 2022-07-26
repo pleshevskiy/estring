@@ -1,14 +1,13 @@
-use crate::core::EString;
+use crate::core::{EString, ParseFragment};
+use crate::error::{Error, Reason};
 
-impl TryFrom<EString> for bool {
-    type Error = ();
-
+impl ParseFragment for bool {
     #[inline]
-    fn try_from(s: EString) -> Result<Self, Self::Error> {
+    fn parse_frag(s: EString) -> crate::Result<Self> {
         match s.to_lowercase().as_str() {
             "true" | "t" | "yes" | "y" | "on" | "1" => Ok(true),
             "false" | "f" | "no" | "n" | "off" | "0" | "" => Ok(false),
-            _ => Err(()),
+            _ => Err(Error(s, Reason::Parse)),
         }
     }
 }
@@ -16,7 +15,6 @@ impl TryFrom<EString> for bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ParseError;
 
     #[test]
     fn should_parse_bool_variable() {
@@ -47,8 +45,9 @@ mod tests {
     fn should_throw_parse_error() {
         let estr = EString::from("something");
         match estr.parse::<bool>() {
-            Err(ParseError(orig)) => {
-                assert_eq!(orig, String::from("something"));
+            Err(crate::Error(orig, reason)) => {
+                assert_eq!(orig, EString::from("something"));
+                assert_eq!(reason, crate::Reason::Parse);
             }
             _ => unreachable!(),
         };
