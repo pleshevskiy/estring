@@ -16,6 +16,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::structs::Pair;
 
     #[test]
     fn should_parse_empty_string_as_none() {
@@ -31,6 +32,15 @@ mod tests {
         let estr = EString::from("99");
         match estr.parse::<Option<i32>>() {
             Ok(res) => assert_eq!(res, Some(99)),
+            _ => unreachable!(),
+        }
+    }
+
+    #[test]
+    fn should_parse_pair() {
+        let estr = EString::from("1+2");
+        match estr.parse::<Option<Pair<i32, '+', i32>>>() {
+            Ok(res) => assert_eq!(res, Some(Pair(1, 2))),
             _ => unreachable!(),
         }
     }
