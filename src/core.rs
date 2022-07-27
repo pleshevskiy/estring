@@ -110,6 +110,19 @@ pub trait ParseFragment: Sized {
     fn parse_frag(es: EString) -> crate::Result<Self>;
 }
 
+// TODO: add example
+/// Trait to represent structures that can act as aggregators.
+///
+/// The `agg` method works with data that has already been parsed. For this reason, **this trait
+/// should never fail**.
+pub trait Aggregate {
+    /// The resulting type after aggregation.
+    type Target: ?Sized;
+
+    /// Aggregates the value.
+    fn agg(&self) -> Self::Target;
+}
+
 /// Wrapper under ``String`` type.
 ///
 /// # Examples
