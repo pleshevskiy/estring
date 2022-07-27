@@ -1,7 +1,7 @@
 //! Contains the implementations to pair tuple type
 //!
 
-use crate::core::{EString, ParseFragment};
+use crate::core::{EString, ParseFragment, ToEString};
 use crate::{Error, Reason};
 use std::fmt::Write;
 
@@ -39,13 +39,25 @@ where
     B: std::fmt::Display,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.0.to_string())?;
-        f.write_char(S1)?;
-        f.write_str(&self.1.to_string())
+        write!(f, "{}{}{}", self.0, S1, self.1)
     }
 }
 
-impl<A, const S1: char, B> ParseFragment for Pair<A, S1, B>
+impl<A, B, const S1: char> ToEString for Pair<A, S1, B>
+where
+    A: ToEString,
+    B: ToEString,
+{
+    fn to_estring(&self) -> EString {
+        let mut res = String::new();
+        write!(res, "{}{}{}", self.0.to_estring(), S1, self.1.to_estring())
+            .ok()
+            .expect("Cannot parse Pair to EString");
+        EString(res)
+    }
+}
+
+impl<A, B, const S1: char> ParseFragment for Pair<A, S1, B>
 where
     A: ParseFragment,
     B: ParseFragment,
@@ -101,5 +113,13 @@ hello=bar",
             Ok(res) => assert_eq!(res, SepVec(vec![Pair("foo", "bar"), Pair("hello", "bar"),])),
             _ => unreachable!(),
         };
+    }
+
+    #[test]
+    fn should_format_pair() {
+        let pair = Pair::<_, '+', _>(1, 2);
+        assert_eq!(pair.clone().to_estring(), EString(String::from("1+2")));
+        let pair_in_pair = Pair::<_, '=', _>(3, pair);
+        assert_eq!(pair_in_pair.to_estring(), EString(String::from("3=1+2")));
     }
 }

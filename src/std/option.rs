@@ -1,4 +1,16 @@
-use crate::core::{EString, ParseFragment};
+use crate::core::{EString, ParseFragment, ToEString};
+
+impl<T> ToEString for Option<T>
+where
+    T: ToEString,
+{
+    fn to_estring(&self) -> EString {
+        match self {
+            Some(inner) => inner.to_estring(),
+            None => EString::new(),
+        }
+    }
+}
 
 impl<T> ParseFragment for Option<T>
 where
@@ -20,7 +32,7 @@ mod tests {
 
     #[test]
     fn should_parse_empty_string_as_none() {
-        let estr = EString::from("");
+        let estr = EString::new();
         match estr.parse::<Option<i32>>() {
             Ok(res) => assert_eq!(res, None),
             _ => unreachable!(),
@@ -43,5 +55,11 @@ mod tests {
             Ok(res) => assert_eq!(res, Some(Pair(1, 2))),
             _ => unreachable!(),
         }
+    }
+
+    #[test]
+    fn should_format_option() {
+        assert_eq!(None::<i32>.to_estring(), EString::new());
+        assert_eq!(Some(99).to_estring(), EString(String::from("99")));
     }
 }

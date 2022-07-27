@@ -1,7 +1,7 @@
 //! Contains the implementations to vec type
 //!
 
-use crate::core::{EString, ParseFragment};
+use crate::core::{EString, ParseFragment, ToEString};
 use std::fmt::Write;
 
 /// Wrapper for ``Vec`` to split string by a separator (`SEP`).
@@ -51,8 +51,29 @@ where
                 f.write_char(SEP)?;
             }
 
-            f.write_str(&part.to_string())
+            write!(f, "{}", part)
         })
+    }
+}
+
+impl<T, const SEP: char> ToEString for SepVec<T, SEP>
+where
+    T: ToEString,
+{
+    fn to_estring(&self) -> EString {
+        self.0
+            .iter()
+            .enumerate()
+            .try_fold(String::new(), |mut res, (i, part)| {
+                if i != 0 {
+                    res.write_char(SEP).ok()?;
+                }
+
+                write!(res, "{}", part.to_estring()).ok()?;
+                Some(res)
+            })
+            .map(EString)
+            .expect("Cannot format SepVec ${self.0} to EString")
     }
 }
 
@@ -74,6 +95,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::Pair;
     use crate::{Error, Reason};
 
     const COMMA: char = ',';
@@ -138,5 +160,15 @@ d,e";
             }
             _ => unreachable!(),
         };
+    }
+
+    #[test]
+    fn should_format_vec() {
+        type PlusPair<T> = Pair<T, '+', T>;
+
+        let vec = SepVec::<_, ','>::from(vec![1, 2, 3]);
+        assert_eq!(vec.to_estring(), EString(String::from("1,2,3")));
+        let vec = SepVec::<_, ','>::from(vec![PlusPair::from((1, 2)), PlusPair::from((3, 4))]);
+        assert_eq!(vec.to_estring(), EString(String::from("1+2,3+4")));
     }
 }
