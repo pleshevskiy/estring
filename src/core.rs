@@ -112,7 +112,7 @@ pub trait ParseFragment: Sized {
 ///
 /// # Examples
 ///
-/// You can create a ``EString`` from a any type that implement [Display] with ``EString::from``
+/// You can create a ``EString`` from a any type that implement ``ToEString`` with ``EString::from``
 ///
 /// ```rust
 /// # use estring::EString;
@@ -120,8 +120,7 @@ pub trait ParseFragment: Sized {
 /// let num = EString::from("999");
 /// ```
 ///
-/// You can create a ``EString`` from a any type that implement ``ToEString`` with
-/// ``ToEString::to_estring``.
+/// You can use ``ToEString::to_estring`` directly on the type.
 ///
 /// ```rust
 /// # use estring::ToEString;
