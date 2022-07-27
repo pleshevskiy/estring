@@ -23,7 +23,9 @@
 /// impl ToEString for Point {
 ///     fn to_estring(&self) -> EString {
 ///         let mut res = String::new();
-///         write!(res, "({},{})", self.x, self.y).ok().expect("Cannot format Point into EString");
+///         write!(res, "({},{})", self.x, self.y)
+///             .ok()
+///             .expect("Cannot format Point into EString");
 ///         EString(res)
 ///     }
 /// }
