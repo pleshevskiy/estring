@@ -1,7 +1,7 @@
 [package]
 name = "estring"
 description = "A simple way to parse a string using type annotations"
-version = "0.1.2"
+version = "0.2.0"
 edition = "2021"
 authors = ["Dmitriy Pleshevskiy <dmitriy@ideascup.me>"]
 readme = "README.md"
