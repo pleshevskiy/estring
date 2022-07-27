@@ -12,11 +12,17 @@ estring = "0.1"
 
 A simple way to parse a string using type annotations.
 
-This package was originally designed for [enve]
+This package was originally designed for [enve].
 
 [enve]: https://github.com/pleshevskiy/enve
 
-## Getting started
+## [Documentation](https://docs.rs/estring)
+
+For more details, see [examples].
+
+[examples]: https://github.com/pleshevskiy/estring/tree/main/examples
+
+## Usage
 
 ```rust
 use estring::{SepVec, EString};
