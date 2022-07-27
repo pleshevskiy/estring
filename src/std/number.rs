@@ -1,4 +1,4 @@
-use crate::core::{EString, ParseFragment};
+use crate::core::{EString, ParseFragment, ToEString};
 use crate::error::{Error, Reason};
 
 #[doc(hidden)]
@@ -9,6 +9,13 @@ macro_rules! from_env_string_numbers_impl {
                 #[inline]
                 fn parse_frag(s: EString) -> crate::Result<Self> {
                     s.0.parse::<Self>().map_err(|_| Error(s, Reason::Parse))
+                }
+            }
+
+            impl ToEString for $ty {
+                #[inline]
+                fn to_estring(&self) -> EString {
+                    EString(self.to_string())
                 }
             }
         )+
@@ -55,5 +62,12 @@ mod tests {
             }
             _ => unreachable!(),
         };
+    }
+
+    #[test]
+    fn should_format_number() {
+        assert_eq!((-1).to_estring(), EString(String::from("-1")));
+        assert_eq!(10.to_estring(), EString(String::from("10")));
+        assert_eq!(1.1.to_estring(), EString(String::from("1.1")));
     }
 }

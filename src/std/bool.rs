@@ -1,4 +1,4 @@
-use crate::core::{EString, ParseFragment};
+use crate::core::{EString, ParseFragment, ToEString};
 use crate::error::{Error, Reason};
 
 impl ParseFragment for bool {
@@ -9,6 +9,13 @@ impl ParseFragment for bool {
             "false" | "f" | "no" | "n" | "off" | "0" | "" => Ok(false),
             _ => Err(Error(s, Reason::Parse)),
         }
+    }
+}
+
+impl ToEString for bool {
+    #[inline]
+    fn to_estring(&self) -> EString {
+        EString(self.to_string())
     }
 }
 
@@ -51,5 +58,11 @@ mod tests {
             }
             _ => unreachable!(),
         };
+    }
+
+    #[test]
+    fn should_format_bool() {
+        assert_eq!(true.to_estring(), EString(String::from("true")));
+        assert_eq!(false.to_estring(), EString(String::from("false")));
     }
 }

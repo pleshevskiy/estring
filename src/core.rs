@@ -2,11 +2,49 @@
 //! string types
 //!
 
-// TODO: add more info and examples.
-/// Format a value fragment into a ``EString``.
-pub trait FormatFragment {
+/// Format this type and wrap into ``EString``.
+///
+/// ``ToEString``’s `to_estring` method is often used implicitly, through ``EString``’s from.
+///
+/// # Examples
+///
+/// Basic implementation of ``ToEString`` on an example ``Point``.
+///
+/// ```rust
+/// use std::fmt::Write;
+/// use estring::{EString, ToEString};
+///
+/// #[derive(Debug, PartialEq)]
+/// struct Point {
+///     x: i32,
+///     y: i32,
+/// }
+///
+/// impl ToEString for Point {
+///     fn to_estring(&self) -> EString {
+///         let mut res = String::new();
+///         write!(res, "({},{})", self.x, self.y).ok().expect("Cannot format Point into EString");
+///         EString(res)
+///     }
+/// }
+///
+/// let point = Point { x: 1, y: 2 };
+/// assert_eq!(point.to_estring(), EString::from("(1,2)"));
+/// ```
+///
+pub trait ToEString {
     /// Format this type and returns ``EString``.
-    fn fmt_frag(&self) -> EString;
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use estring::{EString, ToEString};
+    ///
+    /// let i = 5;
+    /// let five = EString::from(5);
+    /// assert_eq!(five, i.to_estring());
+    /// ```
+    fn to_estring(&self) -> EString;
 }
 
 /// Parse a value fragment from a ``EString``.
@@ -70,11 +108,55 @@ pub trait ParseFragment: Sized {
     fn parse_frag(es: EString) -> crate::Result<Self>;
 }
 
-/// Wrapper under String type.
+/// Wrapper under ``String`` type.
+///
+/// # Examples
+///
+/// You can create a ``EString`` from a any type that implement [Display] with ``EString::from``
+///
+/// ```rust
+/// # use estring::EString;
+/// let hello = EString::from("Hello, world");
+/// let num = EString::from("999");
+/// ```
+///
+/// You can create a ``EString`` from a any type that implement ``ToEString`` with
+/// ``ToEString::to_estring``.
+///
+/// ```rust
+/// # use estring::ToEString;
+/// let some_opt = Some(999).to_estring();
+/// let none_opt = None::<i32>.to_estring();
+/// ```
+///
 #[derive(Debug, Default, PartialEq, Eq, Clone)]
 pub struct EString(pub String);
 
+impl std::fmt::Display for EString {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 impl EString {
+    /// Creates a new empty ``EString``.
+    ///
+    /// This will not allocate any inital buffer.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// # use estring::EString;
+    /// let s = EString::new();
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn new() -> Self {
+        Self(String::new())
+    }
+
     /// Parses this inner string into another type.
     ///
     /// `parse` can parse into any type that implements the ``ParseFragment`` trait.
@@ -110,11 +192,11 @@ impl EString {
 
 impl<T> From<T> for EString
 where
-    T: std::fmt::Display,
+    T: ToEString,
 {
     #[inline]
     fn from(val: T) -> Self {
-        Self(val.to_string())
+        val.to_estring()
     }
 }
 
@@ -129,22 +211,36 @@ impl std::ops::Deref for EString {
 
 impl ParseFragment for EString {
     #[inline]
-    fn parse_frag(value: EString) -> crate::Result<Self> {
-        Ok(value)
+    fn parse_frag(es: EString) -> crate::Result<Self> {
+        Ok(es)
     }
 }
 
 impl ParseFragment for String {
     #[inline]
-    fn parse_frag(s: EString) -> crate::Result<Self> {
-        Ok(s.0)
+    fn parse_frag(es: EString) -> crate::Result<Self> {
+        Ok(es.0)
+    }
+}
+
+impl ToEString for String {
+    #[inline]
+    fn to_estring(&self) -> EString {
+        EString(self.clone())
     }
 }
 
 impl ParseFragment for &'static str {
     #[inline]
-    fn parse_frag(s: EString) -> crate::Result<Self> {
-        Ok(Box::leak(s.0.into_boxed_str()))
+    fn parse_frag(es: EString) -> crate::Result<Self> {
+        Ok(Box::leak(es.0.into_boxed_str()))
+    }
+}
+
+impl<'a> ToEString for &'a str {
+    #[inline]
+    fn to_estring(&self) -> EString {
+        EString((*self).to_string())
     }
 }
 

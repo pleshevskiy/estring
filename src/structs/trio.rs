@@ -2,7 +2,7 @@
 //!
 
 use super::Pair;
-use crate::core::{EString, ParseFragment};
+use crate::core::{EString, ParseFragment, ToEString};
 use std::fmt::Write;
 
 /// Wrapper for trio (A, B, C) tuple to split string by separators (`S1` and `S2`).
@@ -43,6 +43,29 @@ where
         f.write_str(&self.1.to_string())?;
         f.write_char(S2)?;
         f.write_str(&self.2.to_string())
+    }
+}
+
+impl<A, B, C, const S1: char, const S2: char> ToEString for Trio<A, S1, B, S2, C>
+where
+    A: ToEString,
+    B: ToEString,
+    C: ToEString,
+{
+    fn to_estring(&self) -> EString {
+        let mut res = String::new();
+        write!(
+            res,
+            "{}{}{}{}{}",
+            self.0.to_estring(),
+            S1,
+            self.1.to_estring(),
+            S2,
+            self.2.to_estring()
+        )
+        .ok()
+        .expect("Cannot parse Pair to EString");
+        EString(res)
     }
 }
 
@@ -90,5 +113,20 @@ mod tests {
             Ok(res) => assert_eq!(res, Trio("hello", "world", Trio("hello", "world", "hello"))),
             _ => unreachable!(),
         };
+    }
+
+    #[test]
+    fn should_format_trio() {
+        let trio = Trio::<_, '+', _, '-', _>::from(("foo", "baz", "bar"));
+        assert_eq!(
+            trio.clone().to_estring(),
+            EString(String::from("foo+baz-bar"))
+        );
+
+        let trio_in_trio = Trio::<_, '*', _, '=', _>::from(("foo", "baz", trio));
+        assert_eq!(
+            trio_in_trio.clone().to_estring(),
+            EString(String::from("foo*baz=foo+baz-bar"))
+        );
     }
 }

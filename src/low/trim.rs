@@ -1,4 +1,4 @@
-use crate::{core::EString, ParseFragment};
+use crate::core::{EString, ParseFragment, ToEString};
 
 /// Wrapper that allow to trim substring before continue
 ///
@@ -39,6 +39,15 @@ where
 {
     fn parse_frag(value: EString) -> crate::Result<Self> {
         T::parse_frag(EString::from(value.trim())).map(Trim)
+    }
+}
+
+impl<T> ToEString for Trim<T>
+where
+    T: ToEString,
+{
+    fn to_estring(&self) -> EString {
+        self.0.to_estring()
     }
 }
 
