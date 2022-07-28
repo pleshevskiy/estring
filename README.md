@@ -7,7 +7,7 @@
 
 ```toml
 [dependencies]
-estring = "0.2"
+estring = "0.3"
 ```
 
 A simple way to parse a string using type annotations.
