@@ -1,18 +1,11 @@
 use std::marker::PhantomData;
 
-use crate::{Aggregate, EString, ParseFragment};
+use crate::{Aggregate, Aggregateble, EString, ParseFragment};
 
 #[derive(Debug, PartialEq, Eq)]
-struct Sum<R, T>(T, PhantomData<R>)
-where
-    R: Copy + std::iter::Sum,
-    T: ParseFragment + std::ops::Deref<Target = Vec<R>>;
+struct Sum<R, T>(T, PhantomData<R>);
 
-impl<R, T> Sum<R, T>
-where
-    R: Copy + std::iter::Sum,
-    T: ParseFragment + std::ops::Deref<Target = Vec<R>>,
-{
+impl<R, T> Sum<R, T> {
     fn new(inner: T) -> Self {
         Self(inner, PhantomData::default())
     }
@@ -20,8 +13,7 @@ where
 
 impl<R, T> ParseFragment for Sum<R, T>
 where
-    R: Copy + std::iter::Sum,
-    T: ParseFragment + std::ops::Deref<Target = Vec<R>>,
+    T: ParseFragment,
 {
     fn parse_frag(es: EString) -> crate::Result<Self> {
         T::parse_frag(es).map(Self::new)
@@ -30,13 +22,25 @@ where
 
 impl<R, T> Aggregate for Sum<R, T>
 where
-    R: Copy + std::iter::Sum,
-    T: ParseFragment + std::ops::Deref<Target = Vec<R>>,
+    R: std::iter::Sum,
+    T: Aggregateble<Item = R>,
 {
     type Target = R;
 
-    fn agg(&self) -> Self::Target {
-        self.0.iter().copied().sum()
+    fn agg(self) -> Self::Target {
+        self.0.items().into_iter().sum()
+    }
+}
+
+impl<R, T> Aggregateble for Sum<R, T>
+where
+    R: std::iter::Sum,
+    T: Aggregateble<Item = R>,
+{
+    type Item = R;
+
+    fn items(self) -> Vec<Self::Item> {
+        vec![self.agg()]
     }
 }
 
@@ -46,11 +50,14 @@ mod tests {
 
     use super::*;
 
+    type CommaVec<T> = SepVec<T, ','>;
+    type PlusVec<T> = SepVec<T, '+'>;
+
     #[test]
     fn should_parse_vec() {
         let es = EString::from("1,2,3");
-        match es.parse::<Sum<i32, SepVec<i32, ','>>>() {
-            Ok(res) => assert_eq!(res, Sum::new(SepVec::from(vec![1, 2, 3]))),
+        match es.parse::<Sum<i32, CommaVec<i32>>>() {
+            Ok(res) => assert_eq!(res, Sum::new(CommaVec::from(vec![1, 2, 3]))),
             _ => unreachable!(),
         }
     }
@@ -58,16 +65,23 @@ mod tests {
     #[test]
     fn should_aggregate_vector() {
         let es = EString::from("1,2,3");
-        let expr = es.parse::<Sum<i32, SepVec<i32, ','>>>().unwrap();
+        let expr = es.parse::<Sum<i32, CommaVec<i32>>>().unwrap();
         assert_eq!(expr.agg(), 6);
+    }
+
+    #[test]
+    fn should_aggregate_vector_with_inner_vector() {
+        let es = EString::from("1+2,2,3");
+        let expr = es.parse::<Sum<i32, CommaVec<PlusVec<i32>>>>().unwrap();
+        assert_eq!(expr.agg(), 8);
     }
 
     #[test]
     fn should_aggregate_vector_with_inner_aggregation() {
         let es = EString::from("1+2,2,3");
         let expr = es
-            .parse::<Sum<_, SepVec<Sum<_, SepVec<i32, '+'>>, ','>>>()
+            .parse::<Sum<_, CommaVec<Sum<_, PlusVec<i32>>>>>()
             .unwrap();
-        assert_eq!(expr.agg(), 6);
+        assert_eq!(expr.agg(), 8);
     }
 }

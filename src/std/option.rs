@@ -1,4 +1,4 @@
-use crate::core::{EString, ParseFragment, ToEString};
+use crate::core::{Aggregateble, EString, ParseFragment, ToEString};
 
 impl<T> ToEString for Option<T>
 where
@@ -22,6 +22,17 @@ where
         } else {
             es.parse().map(Some)
         }
+    }
+}
+
+impl<T> Aggregateble for Option<T>
+where
+    T: Aggregateble,
+{
+    type Item = T::Item;
+
+    fn items(self) -> Vec<Self::Item> {
+        self.map(T::items).unwrap_or_default()
     }
 }
 

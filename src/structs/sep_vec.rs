@@ -1,7 +1,7 @@
 //! Contains the implementations to vec type
 //!
 
-use crate::core::{EString, ParseFragment, ToEString};
+use crate::core::{Aggregateble, EString, ParseFragment, ToEString};
 use std::fmt::Write;
 
 /// Wrapper for ``Vec`` to split string by a separator (`SEP`).
@@ -92,17 +92,25 @@ where
     }
 }
 
+impl<T, const SEP: char> Aggregateble for SepVec<T, SEP>
+where
+    T: Aggregateble,
+{
+    type Item = T::Item;
+
+    fn items(self) -> Vec<Self::Item> {
+        self.0.into_iter().flat_map(T::items).collect()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::Pair;
     use crate::{Error, Reason};
 
-    const COMMA: char = ',';
-    const SEMI: char = ';';
-
-    type CommaVec<T> = SepVec<T, COMMA>;
-    type SemiVec<T> = SepVec<T, SEMI>;
+    type CommaVec<T> = SepVec<T, ','>;
+    type SemiVec<T> = SepVec<T, ';'>;
 
     #[test]
     fn should_parse_into_vec() {
@@ -170,5 +178,19 @@ d,e";
         assert_eq!(vec.to_estring(), EString(String::from("1,2,3")));
         let vec = SepVec::<_, ','>::from(vec![PlusPair::from((1, 2)), PlusPair::from((3, 4))]);
         assert_eq!(vec.to_estring(), EString(String::from("1+2,3+4")));
+    }
+
+    #[test]
+    fn should_returns_aggregatable_items() {
+        let estr = EString::from("1,2,3,4,5");
+        let res = estr.parse::<CommaVec<i32>>().unwrap();
+        assert_eq!(res.items(), vec![1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn should_returns_flatten_aggregatable_items() {
+        let estr = EString::from("1,2; 3,4,5; 6,7");
+        let res = estr.parse::<SemiVec<CommaVec<i32>>>().unwrap();
+        assert_eq!(res.items(), vec![1, 2, 3, 4, 5, 6, 7]);
     }
 }
