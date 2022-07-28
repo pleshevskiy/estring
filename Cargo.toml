@@ -28,7 +28,7 @@ maintenance = { status = "actively-developed" }
 
 [[example]]
 name = "calc"
-required-features = ["structs"]
+required-features = ["structs", "aggs"]
 
 [[example]]
 name = "dotenv"
