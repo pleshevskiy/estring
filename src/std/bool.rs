@@ -1,4 +1,4 @@
-use crate::core::{EString, ParseFragment, ToEString};
+use crate::core::{Aggregateble, EString, ParseFragment, ToEString};
 use crate::error::{Error, Reason};
 
 impl ParseFragment for bool {
@@ -16,6 +16,14 @@ impl ToEString for bool {
     #[inline]
     fn to_estring(&self) -> EString {
         EString(self.to_string())
+    }
+}
+
+impl Aggregateble for bool {
+    type Item = Self;
+
+    fn items(self) -> Vec<Self::Item> {
+        vec![self]
     }
 }
 

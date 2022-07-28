@@ -1,4 +1,4 @@
-use crate::core::{EString, ParseFragment, ToEString};
+use crate::core::{Aggregateble, EString, ParseFragment, ToEString};
 use crate::error::{Error, Reason};
 
 #[doc(hidden)]
@@ -16,6 +16,14 @@ macro_rules! from_env_string_numbers_impl {
                 #[inline]
                 fn to_estring(&self) -> EString {
                     EString(self.to_string())
+                }
+            }
+
+            impl Aggregateble for $ty {
+                type Item = Self;
+
+                fn items(self) -> Vec<Self::Item> {
+                    vec![self]
                 }
             }
         )+

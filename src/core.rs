@@ -120,7 +120,13 @@ pub trait Aggregate {
     type Target: ?Sized;
 
     /// Aggregates the value.
-    fn agg(&self) -> Self::Target;
+    fn agg(self) -> Self::Target;
+}
+
+pub trait Aggregateble {
+    type Item;
+
+    fn items(self) -> Vec<Self::Item>;
 }
 
 /// Wrapper under ``String`` type.
@@ -230,6 +236,14 @@ impl ParseFragment for EString {
     }
 }
 
+impl Aggregateble for EString {
+    type Item = Self;
+
+    fn items(self) -> Vec<Self::Item> {
+        vec![self]
+    }
+}
+
 impl ParseFragment for String {
     #[inline]
     fn parse_frag(es: EString) -> crate::Result<Self> {
@@ -244,6 +258,14 @@ impl ToEString for String {
     }
 }
 
+impl Aggregateble for String {
+    type Item = Self;
+
+    fn items(self) -> Vec<Self::Item> {
+        vec![self]
+    }
+}
+
 impl ParseFragment for &'static str {
     #[inline]
     fn parse_frag(es: EString) -> crate::Result<Self> {
@@ -255,6 +277,14 @@ impl<'a> ToEString for &'a str {
     #[inline]
     fn to_estring(&self) -> EString {
         EString((*self).to_string())
+    }
+}
+
+impl<'a> Aggregateble for &'a str {
+    type Item = Self;
+
+    fn items(self) -> Vec<Self::Item> {
+        vec![self]
     }
 }
 
