@@ -24,6 +24,23 @@ For more details, see [examples].
 
 ## Usage
 
+Basic
+
+```rust
+use estring::EString;
+
+fn main() -> estring::Result<()> {
+    let res: i32 = EString::from("10").parse()?;
+    assert_eq!(res, 10);
+    Ok(())
+}
+```
+
+You can use predefined structs like `SepVec` if you enable the `structs`
+feature.
+
+Note: You can use custom types as annotations! Just implement `ParseFragment`!
+
 ```rust
 use estring::{SepVec, EString};
 
@@ -42,8 +59,23 @@ fn main() -> estring::Result<()> {
 }
 ```
 
-You can use custom types as annotations! Just implement
-`estring::ParseFragment`!
+You can also use predefined aggregators if you enable the `aggs` feature.
+
+```rust
+use estring::{Aggregate, EString, Product, SepVec, Sum};
+
+type PlusVec<T> = SepVec<T, '+'>;
+type MulVec<T> = SepVec<T, '*'>;
+
+fn main() -> estring::Result<()> {
+    let res = EString::from("10+5*2+3")
+        .parse::<Sum<PlusVec<Product<MulVec<f32>>>>>()?
+        .agg();
+
+    assert_eq!(res, 23.0);
+    Ok(())
+}
+```
 
 ## Contact Us
 

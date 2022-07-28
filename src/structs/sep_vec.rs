@@ -92,6 +92,7 @@ where
     }
 }
 
+#[cfg(feature = "aggs")]
 impl<T, const SEP: char> Aggregatable for SepVec<T, SEP>
 where
     T: Aggregatable,

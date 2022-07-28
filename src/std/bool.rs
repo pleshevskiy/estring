@@ -19,6 +19,7 @@ impl ToEString for bool {
     }
 }
 
+#[cfg(feature = "aggs")]
 impl Aggregatable for bool {
     type Item = Self;
 

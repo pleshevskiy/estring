@@ -25,6 +25,7 @@ where
     }
 }
 
+#[cfg(feature = "aggs")]
 impl<T> Aggregatable for Option<T>
 where
     T: Aggregatable,

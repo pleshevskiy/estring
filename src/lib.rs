@@ -7,7 +7,23 @@
 //!
 //! [enve]: https://github.com/pleshevskiy/enve
 //!
-//! ## Getting started
+//! ## Usage
+//!
+//! Basic
+//!
+//! ```rust
+//! use estring::EString;
+//!
+//! fn main() -> estring::Result<()> {
+//!     let res: i32 = EString::from("10").parse()?;
+//!     assert_eq!(res, 10);
+//!     Ok(())
+//! }
+//! ```
+//!
+//! You can use predefined structs like ``SepVec`` if you enable `structs` feature.
+//!
+//! Note: You can use custom types as annotations! Just implement ``ParseFragment``!
 //!
 //! ```rust
 //! use estring::{SepVec, EString};
@@ -26,6 +42,30 @@
 //!     Ok(())
 //! }
 //! ```
+//!
+//! You can also use predefined aggregators if you enable `aggs` feature.
+//!
+//! ```rust
+//! use estring::{Aggregate, EString, Product, SepVec, Sum};
+//!
+//! type PlusVec<T> = SepVec<T, '+'>;
+//! type MulVec<T> = SepVec<T, '*'>;
+//!
+//! fn main() -> estring::Result<()> {
+//!     let res = EString::from("10+5*2+3")
+//!         .parse::<Sum<PlusVec<Product<MulVec<f32>>>>>()?
+//!         .agg();
+//!
+//!     assert_eq!(res, 23.0);
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ---
+//!
+//! For more details, see [examples].
+//!
+//! [examples]: https://github.com/pleshevskiy/estring/tree/main/examples
 //!
 #![deny(clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]

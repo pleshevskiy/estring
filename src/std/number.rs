@@ -19,6 +19,7 @@ macro_rules! from_env_string_numbers_impl {
                 }
             }
 
+            #[cfg(feature = "aggs")]
             impl Aggregatable for $ty {
                 type Item = Self;
 

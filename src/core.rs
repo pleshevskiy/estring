@@ -240,6 +240,7 @@ impl ParseFragment for EString {
     }
 }
 
+#[cfg(feature = "aggs")]
 impl Aggregatable for EString {
     type Item = Self;
 
@@ -263,6 +264,7 @@ impl ToEString for String {
     }
 }
 
+#[cfg(feature = "aggs")]
 impl Aggregatable for String {
     type Item = Self;
 
@@ -286,6 +288,7 @@ impl<'a> ToEString for &'a str {
     }
 }
 
+#[cfg(feature = "aggs")]
 impl<'a> Aggregatable for &'a str {
     type Item = Self;
 
