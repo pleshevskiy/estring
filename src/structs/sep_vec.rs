@@ -1,7 +1,7 @@
 //! Contains the implementations to vec type
 //!
 
-use crate::core::{Aggregateble, EString, ParseFragment, ToEString};
+use crate::core::{Aggregatable, EString, ParseFragment, ToEString};
 use std::fmt::Write;
 
 /// Wrapper for ``Vec`` to split string by a separator (`SEP`).
@@ -92,9 +92,9 @@ where
     }
 }
 
-impl<T, const SEP: char> Aggregateble for SepVec<T, SEP>
+impl<T, const SEP: char> Aggregatable for SepVec<T, SEP>
 where
-    T: Aggregateble,
+    T: Aggregatable,
 {
     type Item = T::Item;
 

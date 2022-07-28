@@ -1,4 +1,4 @@
-use crate::core::{Aggregateble, EString, ParseFragment, ToEString};
+use crate::core::{Aggregatable, EString, ParseFragment, ToEString};
 
 impl<T> ToEString for Option<T>
 where
@@ -25,9 +25,9 @@ where
     }
 }
 
-impl<T> Aggregateble for Option<T>
+impl<T> Aggregatable for Option<T>
 where
-    T: Aggregateble,
+    T: Aggregatable,
 {
     type Item = T::Item;
 

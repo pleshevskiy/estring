@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{Aggregate, Aggregateble, EString, ParseFragment};
+use crate::{Aggregatable, Aggregate, EString, ParseFragment};
 
 #[derive(Debug, PartialEq, Eq)]
 struct Sum<R, T>(T, PhantomData<R>);
@@ -23,7 +23,7 @@ where
 impl<R, T> Aggregate for Sum<R, T>
 where
     R: std::iter::Sum,
-    T: Aggregateble<Item = R>,
+    T: Aggregatable<Item = R>,
 {
     type Target = R;
 
@@ -32,10 +32,10 @@ where
     }
 }
 
-impl<R, T> Aggregateble for Sum<R, T>
+impl<R, T> Aggregatable for Sum<R, T>
 where
     R: std::iter::Sum,
-    T: Aggregateble<Item = R>,
+    T: Aggregatable<Item = R>,
 {
     type Item = R;
 
