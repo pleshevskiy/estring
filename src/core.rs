@@ -123,9 +123,13 @@ pub trait Aggregate {
     fn agg(self) -> Self::Target;
 }
 
-pub trait Aggregateble {
+// TODO: add example
+/// Trait to represent structures that can iterate values for the aggregator.
+pub trait Aggregatable {
+    /// The type of the elements being iterated over.
     type Item;
 
+    /// Returns Vec of aggregatable values
     fn items(self) -> Vec<Self::Item>;
 }
 
@@ -236,9 +240,10 @@ impl ParseFragment for EString {
     }
 }
 
-impl Aggregateble for EString {
+impl Aggregatable for EString {
     type Item = Self;
 
+    #[inline]
     fn items(self) -> Vec<Self::Item> {
         vec![self]
     }
@@ -258,9 +263,10 @@ impl ToEString for String {
     }
 }
 
-impl Aggregateble for String {
+impl Aggregatable for String {
     type Item = Self;
 
+    #[inline]
     fn items(self) -> Vec<Self::Item> {
         vec![self]
     }
@@ -280,9 +286,10 @@ impl<'a> ToEString for &'a str {
     }
 }
 
-impl<'a> Aggregateble for &'a str {
+impl<'a> Aggregatable for &'a str {
     type Item = Self;
 
+    #[inline]
     fn items(self) -> Vec<Self::Item> {
         vec![self]
     }
