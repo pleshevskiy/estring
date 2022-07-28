@@ -118,7 +118,7 @@ hello=bar",
     #[test]
     fn should_format_pair() {
         let pair = Pair::<_, '+', _>(1, 2);
-        assert_eq!(pair.clone().to_estring(), EString(String::from("1+2")));
+        assert_eq!(pair.to_estring(), EString(String::from("1+2")));
         let pair_in_pair = Pair::<_, '=', _>(3, pair);
         assert_eq!(pair_in_pair.to_estring(), EString(String::from("3=1+2")));
     }

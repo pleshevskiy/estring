@@ -1,4 +1,4 @@
-use crate::core::{Aggregatable, EString, ParseFragment, ToEString};
+use crate::core::{EString, ParseFragment, ToEString};
 use crate::error::{Error, Reason};
 
 impl ParseFragment for bool {
@@ -20,7 +20,7 @@ impl ToEString for bool {
 }
 
 #[cfg(feature = "aggs")]
-impl Aggregatable for bool {
+impl crate::core::Aggregatable for bool {
     type Item = Self;
 
     #[inline]

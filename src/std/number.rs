@@ -1,4 +1,4 @@
-use crate::core::{Aggregatable, EString, ParseFragment, ToEString};
+use crate::core::{EString, ParseFragment, ToEString};
 use crate::error::{Error, Reason};
 
 #[doc(hidden)]
@@ -20,7 +20,7 @@ macro_rules! from_env_string_numbers_impl {
             }
 
             #[cfg(feature = "aggs")]
-            impl Aggregatable for $ty {
+            impl crate::core::Aggregatable for $ty {
                 type Item = Self;
 
                 #[inline]
